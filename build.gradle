@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.example'
@@ -23,6 +24,38 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+/**
+ * Jacoco
+ */
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    // 2. test 종료 후 jacocoTestReport 실행
+    finalizedBy jacocoTestReport
+}
+
+// 3. 커버리지 결과를 html 파일로 가공
+jacocoTestReport {
+    dependsOn test
+}
+
+// 4. 커버리지 기준을 만족하는지 확인해 주는 task
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+        
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                // value = 'COVERDRATIO'
+                minimum = 0.20
+            }
+            /**
+            excludes = listOf(
+                    "*.Config.*",
+            )
+			*/
+        }
+    }
 }
