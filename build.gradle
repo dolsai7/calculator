@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'jacoco'
+    id 'pmd'
 }
 
 group = 'com.example'
@@ -36,6 +37,10 @@ tasks.named('test') {
 // 3. 커버리지 결과를 html 파일로 가공
 jacocoTestReport {
     dependsOn test
+    reports {
+        html.required = true
+        xml.required = true
+    }
 }
 
 // 4. 커버리지 기준을 만족하는지 확인해 주는 task
@@ -57,5 +62,21 @@ jacocoTestCoverageVerification {
             )
 			*/
         }
+    }
+}
+
+pmd {
+    toolVersion = "7.12.0"
+    ruleSetFiles = files("config/pmd/pmd.xml")         // The location of the configuration file.
+    ruleSets = []   
+    //targets = 'src/main/java' 
+    ignoreFailures = true
+    reportsDir = file("${buildDir}/pmd-output)")
+}
+
+pmdMain {
+    reports {
+        xml.destination = file("${pmd.reportsDir}/pmd-report.xml")
+        //xml.enabled = true
     }
 }
